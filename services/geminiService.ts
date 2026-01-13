@@ -1,7 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { SearchResult } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+const ai = new GoogleGenAI({ apiKey: import.meta.env.VITE_API_KEY });
 
 export const askBartender = async (query: string): Promise<SearchResult> => {
   try {
