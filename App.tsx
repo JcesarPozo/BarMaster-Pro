@@ -124,7 +124,7 @@ export default function App() {
       )}
 
       {/* AI Assistant Widget */}
-     {/*  <AIBartender />*/}
+       <AIBartender />
       
     </div>
   );
