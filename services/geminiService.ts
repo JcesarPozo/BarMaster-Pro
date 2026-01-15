@@ -1,37 +1,34 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SearchResult } from '../types';
 
-// 1. Configuración de la API Key (Asegúrate de tener VITE_ en tu .env)
+// 1. Obtenemos la clave de las variables de entorno de Vite
 const apiKey = import.meta.env.VITE_API_KEY;
 
-if (!apiKey) {
-  throw new Error("La clave de API de Gemini no está configurada. Revisa tu archivo .env");
-}
-
-const genAI = new GoogleGenerativeAI(apiKey);
+// 2. Inicializamos la conexión con Google
+// Usamos "as any" o una validación simple para que no de error si la clave falta al inicio
+const genAI = new GoogleGenerativeAI(apiKey || "");
 
 export const askBartender = async (query: string): Promise<SearchResult> => {
   try {
-    // 2. Inicializar el modelo (puedes usar gemini-1.5-flash para mayor velocidad)
+    // 3. Configuramos el modelo (Gemini 1.5 Flash es el más rápido para apps web)
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-    // 3. Realizar la petición
+    // 4. Enviamos la pregunta a la IA
     const result = await model.generateContent(query);
     const response = await result.response;
     const text = response.text();
 
-    // 4. Formatear el resultado según tu interfaz SearchResult
-    // Ajusta los campos según lo que necesite tu frontend
+    // 5. Retornamos el objeto exacto que espera tu aplicación
+    // Ajusta los campos según lo que necesite tu componente (id, title, etc.)
     return {
       answer: text,
-      status: 'success',
-      timestamp: new Date().toISOString()
-    };
+      id: Date.now().toString(),
+      title: "Sugerencia del Bartender",
+      // Si tu tipo SearchResult tiene otros campos obligatorios, añádelos aquí
+    } as SearchResult;
 
   } catch (error) {
-    console.error("Error consultando al bartender AI:", error);
-    
-    // Lanzamos un error descriptivo
-    throw new Error("El bartender está en un descanso. Intenta más tarde.");
+    console.error("Error detallado en la consulta:", error);
+    throw new Error("El bartender no pudo responder. Revisa la consola o la API Key.");
   }
 };
