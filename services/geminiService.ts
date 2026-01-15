@@ -1,8 +1,17 @@
+// geminiService.ts (Prueba temporal)
+/*
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { SearchResult } from '../types';
+const genAI = new GoogleGenerativeAI(import.meta.env.VITE_API_KEY);
+export const askBartender = async (query: string) => { ... };
+*/
+
+// Agrega solo esto para que no de error de importación en otros archivos:
+export const askBartender = async () => { return { answer: "test" } };
+//import { GoogleGenerativeAI } from "@google/generative-ai";
+//import { SearchResult } from '../types';
 
 // 1. Configuración de la API Key (Asegúrate de tener VITE_ en tu .env)
-const apiKey = import.meta.env.VITE_API_KEY;
+//const apiKey = import.meta.env.VITE_API_KEY;
 
 if (!apiKey) {
   throw new Error("La clave de API de Gemini no está configurada. Revisa tu archivo .env");
