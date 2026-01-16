@@ -1,17 +1,7 @@
-import { defineConfig, loadEnv } from 'vite';
-import react from '@vitejs/plugin-react'; // O el plugin que uses (vue, etc)
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
-export default defineConfig(({ mode }) => {
-  // Carga las variables de entorno
-  const env = loadEnv(mode, process.cwd(), '');
-  
-  return {
-    // 1. IMPORTANTE: Esto ayuda a que Vercel encuentre los archivos
-    base: './', 
-    plugins: [react()],
-    define: {
-      // 2. Esto asegura que las variables estén disponibles
-      'process.env': env
-    }
-  };
-});
+export default defineConfig({
+  plugins: [react()],
+  root: './', // Le decimos que el proyecto está en la raíz, no en /src
+})
