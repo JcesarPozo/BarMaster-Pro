@@ -8,12 +8,9 @@ export default defineConfig({
   css: {
     postcss: {
       plugins: [
-        tailwindcss(), 
-        autoprefixer()
+        tailwindcss, 
+        autoprefixer
       ],
     },
   },
-  build: {
-    outDir: 'dist',
-  }
 })
