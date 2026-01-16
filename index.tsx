@@ -1,11 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import './index.css'; // <--- ASEGÚRATE DE QUE ESTA LÍNEA ESTÉ AQUÍ
+import './index.css';
+
 const rootElement = document.getElementById('root');
-if (!rootElement) {
-  throw new Error("Could not find root element to mount to");
-}
+if (!rootElement) throw new Error('No se encontró el elemento root');
 
 const root = ReactDOM.createRoot(rootElement);
 root.render(
