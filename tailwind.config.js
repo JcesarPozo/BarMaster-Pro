@@ -2,14 +2,15 @@
 export default {
   content: [
     "./index.html",
-    "./*.{js,ts,jsx,tsx}",
+    "./*.{js,ts,jsx,tsx}",               // Busca en la raíz (para App.tsx y main.tsx)
+    "./components/**/*.{js,ts,jsx,tsx}", // Busca en la carpeta components
+    "./src/**/*.{js,ts,jsx,tsx}"         // Por seguridad, por si creas la carpeta luego
   ],
   theme: {
     extend: {
       colors: {
-        // Esto asegura que los colores de tu App.tsx existan
         slate: {
-          950: '#020617',
+          950: '#020617', // Tu color de fondo
         }
       }
     },
