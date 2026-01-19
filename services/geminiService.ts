@@ -8,6 +8,7 @@ const apiKey = import.meta.env.VITE_API_KEY;
 const genAI = new GoogleGenerativeAI(apiKey || "NO_API_KEY");
 
 export const askBartender = async (query: string): Promise<SearchResult> => {
+  console.log("DEBUG: Usando modelo gemini-pro..."); // <--- AÑADE ESTO
   try {
     // 3. Configuramos el modelo (Gemini 1.5 Flash es el más rápido para apps web)
     const model = genAI.getGenerativeModel({ model: "gemini-pro" });
