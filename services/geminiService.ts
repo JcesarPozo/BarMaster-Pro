@@ -13,17 +13,12 @@ export const askBartender = async (query: string): Promise<SearchResult> => {
     const response = await result.response;
     const text = response.text();
 
-    console.log("Respuesta de la IA recibida:", text);
-
-    // Devolvemos un objeto con todos los nombres posibles 
-    // para que la interfaz encuentre lo que busca
+    // Importante: devolvemos un objeto totalmente nuevo
     return {
-      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      // Este ID aleatorio obliga a React a renderizar de nuevo
+      id: Math.random().toString(36).substring(7),
       answer: text,
-      response: text,    // Otros buscan 'response'
-      content: text,     // Otros buscan 'content'
-      text: text,        // Otros buscan 'text'
-      title: "Sugerencia del Maestro",
+      title: `Resultado para: ${query}`, // Esto cambia con cada pregunta
       sources: [],
       links: []
     } as any;
