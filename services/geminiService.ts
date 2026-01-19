@@ -11,7 +11,7 @@ export const askBartender = async (query: string) => {
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
     // Usamos el nombre más estándar para evitar el 404
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
     console.log("Enviando pregunta a Gemini:", query);
 
