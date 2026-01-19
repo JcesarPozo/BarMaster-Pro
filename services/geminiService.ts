@@ -1,12 +1,11 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SearchResult } from '../types';
 
-// 1. Obtienes la llave desde Vercel
-const apiKey = import.meta.env.VITE_API_KEY; 
+const apiKey = import.meta.env.VITE_API_KEY;
 
-// 2. Creas el "motor" usando esa llave
-const genAI = new GoogleGenerativeAI(apiKey);
-//const genAI = new GoogleGenerativeAI(apiKey || "");
+// Si no hay API Key, usamos un string vacío para que la web no se ponga en blanco al cargar,
+// pero dará error si intentas preguntar algo.
+const genAI = new GoogleGenerativeAI(apiKey || "NO_API_KEY");
 
 export const askBartender = async (query: string): Promise<SearchResult> => {
   try {
