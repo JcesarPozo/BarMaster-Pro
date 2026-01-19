@@ -71,9 +71,9 @@ export const AIBartender: React.FC = () => {
               <p className="text-lg font-medium text-slate-400">¿Qué deseas saber hoy, aprendiz?</p>
               <p className="text-sm mt-2">Pregunta por historia, tendencias o consejos técnicos.</p>
               <div className="flex flex-wrap justify-center gap-2 mt-6">
-                <button onClick={() => setQuery("¿Cuál es la historia del Negroni?")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Historia del Negroni</button>
+                <button onClick={() => setQuery("Consulta al Maestro sobre cualquier duda de coctelería...")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Historia del Negroni</button>
                 <button onClick={() => setQuery("Tendencias de coctelería 2026")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Tendencias 2024</button>
-                <button onClick={() => setQuery("Diferencia entre Tequila y Mezcal")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Tequila vs Mezcal</button>
+                <button onClick={() => setQuery("¿Qué tienes en tu bar? Dime ingredientes y te daré una receta...")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Tequila vs Mezcal</button>
               </div>
             </div>
           )}
