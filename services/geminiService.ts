@@ -18,8 +18,8 @@ export const askBartender = async (query: string): Promise<SearchResult> => {
     // Devolvemos un objeto con todos los nombres posibles 
     // para que la interfaz encuentre lo que busca
     return {
-      id: Date.now().toString(),
-      answer: text,      // Algunos componentes buscan 'answer'
+      id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+      answer: text,
       response: text,    // Otros buscan 'response'
       content: text,     // Otros buscan 'content'
       text: text,        // Otros buscan 'text'
