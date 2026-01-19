@@ -14,7 +14,7 @@ export const askBartender = async (query: string): Promise<SearchResult> => {
     const genAI = new GoogleGenerativeAI(apiKey);
     
     // 3. Usamos gemini-1.5-flash que es el más moderno
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
     // 4. Llamada a la IA
     const result = await model.generateContent(query);
