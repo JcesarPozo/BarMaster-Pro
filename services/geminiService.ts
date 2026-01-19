@@ -23,12 +23,13 @@ export const askBartender = async (query: string) => {
 
     // Retornamos un objeto limpio y con ID único garantizado
     return {
-      id: Date.now().toString() + Math.random().toString(36).substring(2, 9),
-      answer: text,
-      title: "Sugerencia del Bartender",
-      sources: [],
-      links: []
-    };
+  id: Date.now().toString(),
+  answer: text,   // Este es el que usaremos ahora
+  text: text,     // Por si acaso
+  response: text, // Por si acaso
+  sources: [],
+  links: []
+  };
 
   } catch (error) {
     console.error("Error detallado en el servicio:", error);
