@@ -1,12 +1,12 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SearchResult } from '../types';
 
-// 1. Obtenemos la clave de las variables de entorno de Vite
-const apiKey = import.meta.env.VITE_API_KEY;
+// 1. Obtienes la llave desde Vercel
+const apiKey = import.meta.env.VITE_API_KEY; 
 
-// 2. Inicializamos la conexión con Google
-// Usamos "as any" o una validación simple para que no de error si la clave falta al inicio
-const genAI = new GoogleGenerativeAI(apiKey || "");
+// 2. Creas el "motor" usando esa llave
+const genAI = new GoogleGenerativeAI(apiKey);
+//const genAI = new GoogleGenerativeAI(apiKey || "");
 
 export const askBartender = async (query: string): Promise<SearchResult> => {
   try {
