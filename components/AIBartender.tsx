@@ -11,23 +11,24 @@ export const AIBartender: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleAsk = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!query.trim()) return;
+  e.preventDefault();
+  if (!query.trim()) return;
 
-    setIsLoading(true);
-    setError(null);
-    setResult(null);
+  setIsLoading(true);
+  setError(null);
+  setResult(null); // Limpiamos el anterior para que aparezca el cargando
 
-    try {
-      const response = await askBartender(query);
-      setResult(response);
-    } catch (err: any) {
-      setError(err.message || 'Error de conexión con el bartender.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  try {
+    const response = await askBartender(query);
+    setResult(response);
+    setQuery(''); // <--- ESTO LIMPIA EL BUSCADOR AUTOMÁTICAMENTE
+  } catch (err: any) {
+    setError(err.message || 'Error de conexión con el bartender.');
+  } finally {
+    setIsLoading(false);
+  }
+};
+  
   if (!isOpen) {
     return (
       <button
@@ -85,12 +86,13 @@ export const AIBartender: React.FC = () => {
           )}
 
           {result && (
-            <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-              <div className="prose prose-invert prose-amber max-w-none">
-                <p className="whitespace-pre-line leading-relaxed text-slate-200">
-                  {result.text}
-                </p>
-              </div>
+           <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="prose prose-invert prose-amber max-w-none">
+              <p className="whitespace-pre-line leading-relaxed text-slate-200">
+                {/* CAMBIO CLAVE AQUÍ: Usamos .answer o .response que es lo que manda el servicio */}
+                {result.answer || result.text || (result as any).response}
+              </p>
+            </div>
 
               {result.sources.length > 0 && (
                 <div className="bg-slate-950/50 rounded-lg p-4 border border-slate-800">
