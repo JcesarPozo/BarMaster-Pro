@@ -7,7 +7,7 @@ export const askBartender = async (query: string): Promise<SearchResult> => {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+    const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
     const result = await model.generateContent(query);
     const response = await result.response;
