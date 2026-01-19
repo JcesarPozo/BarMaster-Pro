@@ -14,23 +14,19 @@ if (!apiKey) {
 const genAI = new GoogleGenerativeAI(apiKey || "NO_API_KEY");
 
 export const askBartender = async (query: string): Promise<SearchResult> => {
-  console.log("DEBUG: Usando modelo gemini-pro..."); // <--- AÑADE ESTO
+  // ... (tus console.log de depuración)
   try {
-    // 3. Configuramos el modelo (Gemini 1.5 Flash es el más rápido para apps web)
-    const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+    // Probamos con el nombre técnico exacto
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); 
 
-    // 4. Enviamos la pregunta a la IA
     const result = await model.generateContent(query);
     const response = await result.response;
     const text = response.text();
 
-    // 5. Retornamos el objeto exacto que espera tu aplicación
-    // Ajusta los campos según lo que necesite tu componente (id, title, etc.)
     return {
       answer: text,
       id: Date.now().toString(),
       title: "Sugerencia del Bartender",
-      // Si tu tipo SearchResult tiene otros campos obligatorios, añádelos aquí
     } as SearchResult;
 
   } catch (error) {
