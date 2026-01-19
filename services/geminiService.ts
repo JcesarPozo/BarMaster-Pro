@@ -12,7 +12,7 @@ export const askBartender = async (query: string): Promise<SearchResult> => {
     const genAI = new GoogleGenerativeAI(apiKey);
     
     // CAMBIO CLAVE: Usamos la versión 2.0 que es la que ves en tu panel
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash-lite" });
 
     const result = await model.generateContent(query);
     const response = await result.response;
