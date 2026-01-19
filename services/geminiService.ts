@@ -1,36 +1,42 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SearchResult } from '../types';
 
-const apiKey = import.meta.env.VITE_API_KEY;
-// AÑADE ESTO PARA DEPURAR
-if (!apiKey) {
-  console.error("¡ERROR! La API Key no está llegando a la aplicación. Revisa Vercel.");
-} else {
-  console.log("API Key detectada (empieza por):", apiKey.substring(0, 3));
-}
-
-// Si no hay API Key, usamos un string vacío para que la web no se ponga en blanco al cargar,
-// pero dará error si intentas preguntar algo.
-const genAI = new GoogleGenerativeAI(apiKey || "NO_API_KEY");
-
 export const askBartender = async (query: string): Promise<SearchResult> => {
-  // ... (tus console.log de depuración)
-  try {
-    // Probamos con el nombre técnico exacto
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); 
+  // 1. Obtenemos la llave justo cuando se necesita
+  const apiKey = import.meta.env.VITE_API_KEY;
 
+  if (!apiKey) {
+    throw new Error("API Key no configurada en Vercel.");
+  }
+
+  try {
+    // 2. Inicializamos el motor AQUÍ adentro
+    const genAI = new GoogleGenerativeAI(apiKey);
+    
+    // 3. Usamos gemini-1.5-flash que es el más moderno
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
+    // 4. Llamada a la IA
     const result = await model.generateContent(query);
     const response = await result.response;
     const text = response.text();
 
+    if (!text) throw new Error("La IA devolvió una respuesta vacía.");
+
     return {
       answer: text,
       id: Date.now().toString(),
-      title: "Sugerencia del Bartender",
+      title: "Sugerencia del Maestro Mezclador",
     } as SearchResult;
 
-  } catch (error) {
-    console.error("Error detallado en la consulta:", error);
-    throw new Error("El bartender no pudo responder. Revisa la consola o la API Key.");
+  } catch (error: any) {
+    // ESTO ES CLAVE: Vamos a imprimir el error real de Google en la consola
+    console.error("ERROR REAL DE GOOGLE:", error);
+    
+    if (error.message?.includes("404")) {
+      throw new Error("Error 404: El modelo no está disponible. Intenta cambiar la región de tu API Key en Google AI Studio.");
+    }
+    
+    throw new Error("El bartender está ocupado. Intenta de nuevo.");
   }
 };
