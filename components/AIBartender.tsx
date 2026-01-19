@@ -72,7 +72,7 @@ export const AIBartender: React.FC = () => {
               <p className="text-sm mt-2">Pregunta por historia, tendencias o consejos técnicos.</p>
               <div className="flex flex-wrap justify-center gap-2 mt-6">
                 <button onClick={() => setQuery("¿Cuál es la historia del Negroni?")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Historia del Negroni</button>
-                <button onClick={() => setQuery("Tendencias de coctelería 2024")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Tendencias 2024</button>
+                <button onClick={() => setQuery("Tendencias de coctelería 2026")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Tendencias 2024</button>
                 <button onClick={() => setQuery("Diferencia entre Tequila y Mezcal")} className="text-xs border border-slate-700 hover:border-amber-500/50 px-3 py-1.5 rounded-full transition-colors">Tequila vs Mezcal</button>
               </div>
             </div>
@@ -131,7 +131,7 @@ export const AIBartender: React.FC = () => {
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              placeholder="Ej: ¿Qué ginebra es mejor para un Dry Martini?"
+              placeholder="Pregúntale al Maestro sobre historias, recetas, ingredientes o técnicas..."
               className="w-full bg-slate-950 border border-slate-700 text-slate-100 rounded-lg pl-4 pr-12 py-3 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all placeholder:text-slate-600"
             />
             <button 
