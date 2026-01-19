@@ -2,6 +2,12 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { SearchResult } from '../types';
 
 const apiKey = import.meta.env.VITE_API_KEY;
+// AÑADE ESTO PARA DEPURAR
+if (!apiKey) {
+  console.error("¡ERROR! La API Key no está llegando a la aplicación. Revisa Vercel.");
+} else {
+  console.log("API Key detectada (empieza por):", apiKey.substring(0, 3));
+}
 
 // Si no hay API Key, usamos un string vacío para que la web no se ponga en blanco al cargar,
 // pero dará error si intentas preguntar algo.
