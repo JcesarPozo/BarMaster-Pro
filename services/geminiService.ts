@@ -7,23 +7,26 @@ export const askBartender = async (query: string): Promise<SearchResult> => {
 
   try {
     const genAI = new GoogleGenerativeAI(apiKey);
-    // Usamos gemini-2.0-flash que es el estándar actual en AI Studio
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
     const result = await model.generateContent(query);
     const response = await result.response;
     const text = response.text();
 
-    // AQUÍ ESTÁ EL TRUCO: 
-    // Creamos un objeto que tenga TODO lo que tu interfaz podría buscar
-    // para que nunca dé "undefined".
+    console.log("Respuesta de la IA recibida:", text);
+
+    // Devolvemos un objeto con todos los nombres posibles 
+    // para que la interfaz encuentre lo que busca
     return {
-      answer: text,
       id: Date.now().toString(),
-      title: "Respuesta del Maestro Mezclador",
-      sources: [], // Añadimos esto vacío para que l.sources no falle
-      links: []    // Añadimos esto por si acaso
-    } as any; // Usamos 'as any' temporalmente para saltar bloqueos de tipos
+      answer: text,      // Algunos componentes buscan 'answer'
+      response: text,    // Otros buscan 'response'
+      content: text,     // Otros buscan 'content'
+      text: text,        // Otros buscan 'text'
+      title: "Sugerencia del Maestro",
+      sources: [],
+      links: []
+    } as any;
 
   } catch (error: any) {
     console.error("Error en servicio:", error);
