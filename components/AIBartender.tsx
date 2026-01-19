@@ -52,7 +52,7 @@ export const AIBartender: React.FC = () => {
             </div>
             <div>
               <h2 className="text-xl font-serif font-bold text-slate-100">Maestro Mezclador IA</h2>
-              <p className="text-xs text-slate-400">Impulsado por Borrachos y Mas...</p>
+              <p className="text-xs text-slate-400">Impulsado por Borrach@s y Mas...</p>
             </div>
           </div>
           <button 
