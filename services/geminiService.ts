@@ -1,38 +1,44 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { SearchResult } from '../types';
 
-export const askBartender = async (query: string) => {
-  const apiKey = import.meta.env.VITE_API_KEY;
-  
-  if (!apiKey) {
-    console.error("Falta la API Key en las variables de entorno");
-    throw new Error("Configuración incompleta");
+export const askBartender = async (query: string): Promise<SearchResult> => {
+  if (!query || !query.trim()) {
+    throw new Error('Por favor escribe tu consulta para el bartender.');
   }
 
   try {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    // Usamos el nombre más estándar para evitar el 404
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const response = await fetch('/api/bartender', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ query: query.trim() }),
+    });
 
-    console.log("Enviando pregunta a Gemini:", query);
+    if (!response.ok) {
+      let errorMessage = `Error en el servidor (${response.status})`;
+      try {
+        const errorData = await response.json();
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        }
+      } catch {
+        // Fallback to response statusText if JSON parsing fails
+        if (response.statusText) {
+          errorMessage = response.statusText;
+        }
+      }
+      throw new Error(errorMessage);
+    }
 
-    const result = await model.generateContent(query);
-    const response = await result.response;
-    const text = response.text();
-
-    console.log("Respuesta recibida correctamente");
-
-    // Retornamos un objeto limpio y con ID único garantizado
+    const data: SearchResult = await response.json();
     return {
-  id: Date.now().toString(),
-  answer: text,   // Este es el que usaremos ahora
-  text: text,     // Por si acaso
-  response: text, // Por si acaso
-  sources: [],
-  links: []
-  };
-
-  } catch (error) {
-    console.error("Error detallado en el servicio:", error);
-    throw error;
+      text: data.text || 'No se recibió respuesta del maestro.',
+      sources: data.sources || [],
+      cocktail: data.cocktail || null,
+      cached: data.cached,
+    };
+  } catch (error: any) {
+    console.error('Error consultando al bartender AI:', error);
+    throw new Error(error.message || 'El maestro bartender está atendiendo otra mesa. Por favor, intenta de nuevo en un momento.');
   }
 };

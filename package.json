@@ -1,25 +1,27 @@
 {
-  "name": "bar-master",
+  "name": "barmaster-pro---mixology-dashboard",
   "private": true,
-  "version": "1.0.0",
+  "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "tsx server.ts",
     "build": "vite build",
+    "start": "node server.ts",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@google/generative-ai": "^0.21.0",
-    "@vitejs/plugin-react": "^4.2.1",
-    "autoprefixer": "^10.4.18",
-    "clsx": "^2.1.0",
-    "lucide-react": "^0.344.0",
-    "postcss": "^8.4.35",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "tailwind-merge": "^2.2.1",
-    "tailwindcss": "^3.4.1",
-    "typescript": "^5.2.2",
-    "vite": "^5.1.4"
+    "@google/genai": "^1.35.0",
+    "express": "^5.2.1",
+    "lucide-react": "^0.562.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.14.0",
+    "@vitejs/plugin-react": "^5.0.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.8.2",
+    "vite": "^6.2.0"
   }
 }

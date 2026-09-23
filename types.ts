@@ -16,7 +16,19 @@ export interface Cocktail {
   difficulty: 'Fácil' | 'Medio' | 'Experto';
 }
 
+export interface DetectedCocktail {
+  isElaborating: boolean;
+  name: string;
+  category?: string;
+  glass?: string;
+  garnish?: string;
+  imageUrl?: string;
+  source?: 'database' | 'cocktaildb' | 'generated' | 'curated';
+}
+
 export interface SearchResult {
   text: string;
   sources: { title: string; uri: string }[];
+  cocktail?: DetectedCocktail | null;
+  cached?: boolean;
 }

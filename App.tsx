@@ -24,7 +24,8 @@ export default function App() {
   }, [selectedCategory, searchQuery]);
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#020617', color: 'white', overflow: 'visible' }}>  
+    <div className="flex h-screen overflow-hidden bg-slate-950 text-slate-200 font-sans selection:bg-amber-500/30 selection:text-amber-200">
+      
       {/* Sidebar */}
       <Sidebar 
         selectedCategory={selectedCategory} 
@@ -123,7 +124,7 @@ export default function App() {
       )}
 
       {/* AI Assistant Widget */}
-       <AIBartender />
+      <AIBartender />
       
     </div>
   );
