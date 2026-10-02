@@ -8,6 +8,7 @@ import { CocktailCard } from './components/CocktailCard';
 import { CocktailModal } from './components/CocktailModal';
 import { AIBartender } from './components/AIBartender';
 import { UserGuideModal } from './components/UserGuideModal';
+import { FooterSignature } from './components/FooterSignature';
 import { COCKTAILS } from './data/cocktails';
 import { CocktailCategory, Cocktail } from './types';
 import { Sparkles, SlidersHorizontal, Search, RotateCcw, Wine, Check } from 'lucide-react';
@@ -273,20 +274,8 @@ export default function App() {
         </div>
       </main>
 
-      {/* Editorial Footer */}
-      <footer className="border-t border-slate-800/80 bg-slate-950 py-10 px-6 sm:px-8 mt-12 text-slate-400 text-xs">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2 text-slate-300 font-serif text-base font-bold">
-            <span>BarMaster Pro</span>
-            <span aria-hidden="true" className="text-slate-600">·</span>
-            <span className="text-xs text-amber-400 font-sans font-normal">Plataforma Mixológica de Autor</span>
-          </div>
-
-          <p className="text-slate-400 text-center sm:text-right">
-            Disfrute con responsabilidad. Prohibida la venta a menores de edad según la legislación local.
-          </p>
-        </div>
-      </footer>
+      {/* Editorial Footer with Borrach@s y mas... Signature & Rights Seal */}
+      <FooterSignature />
 
       {/* Recipe Detail Modal */}
       {selectedCocktail && (
