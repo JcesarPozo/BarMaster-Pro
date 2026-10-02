@@ -16,6 +16,25 @@ export interface Cocktail {
   difficulty: 'Fácil' | 'Medio' | 'Experto';
 }
 
+export interface CocktailVisualProfile {
+  archetypeId: 'espresso' | 'ruby' | 'emerald' | 'cyan' | 'amber' | 'sunset' | 'creamy' | 'clear';
+  primaryColor: string;
+  secondaryColor: string;
+  liquidName: string;
+  isCreamy?: boolean;
+  hasFoam?: boolean;
+  hasBubbles?: boolean;
+  iceStyle?: string;
+  technique?: string;
+}
+
+export interface ExtractedIngredientLayer {
+  name: string;
+  amount?: string;
+  color: string;
+  percentage?: number;
+}
+
 export interface DetectedCocktail {
   isElaborating: boolean;
   name: string;
@@ -23,7 +42,9 @@ export interface DetectedCocktail {
   glass?: string;
   garnish?: string;
   imageUrl?: string;
-  source?: 'database' | 'cocktaildb' | 'generated' | 'curated';
+  source?: 'database' | 'cocktaildb' | 'generated' | 'curated' | 'ai_profile';
+  visualProfile?: CocktailVisualProfile;
+  extractedIngredients?: ExtractedIngredientLayer[];
 }
 
 export interface SearchResult {

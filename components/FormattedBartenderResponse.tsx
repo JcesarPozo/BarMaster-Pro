@@ -13,9 +13,13 @@ import {
   ChevronRight,
   Eye,
   Camera,
-  X
+  X,
+  Layers,
+  Palette,
+  CheckCircle2
 } from 'lucide-react';
 import { DetectedCocktail } from '../types';
+import { CocktailVisualizer } from './CocktailVisualizer';
 
 interface FormattedBartenderResponseProps {
   rawText: string;
@@ -360,6 +364,7 @@ export const FormattedBartenderResponse: React.FC<FormattedBartenderResponseProp
   const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
+  const [viewMode, setViewMode] = useState<'photo' | 'layers'>('photo');
   const sections = parseBartenderResponse(rawText);
 
   const handleCopy = () => {
@@ -375,7 +380,8 @@ export const FormattedBartenderResponse: React.FC<FormattedBartenderResponseProp
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const hasDetectedCocktail = Boolean(cocktail && cocktail.isElaborating && cocktail.imageUrl && !imageError);
+  const hasDetectedCocktail = Boolean(cocktail && cocktail.isElaborating);
+  const hasPhoto = Boolean(cocktail?.imageUrl && !imageError);
 
   return (
     <div className="space-y-5">
@@ -401,47 +407,107 @@ export const FormattedBartenderResponse: React.FC<FormattedBartenderResponseProp
       {/* COCKTAIL PRESENTATION CARD: Displayed when AI detects cocktail elaboration */}
       {hasDetectedCocktail && cocktail && (
         <div className="relative rounded-2xl overflow-hidden border border-amber-500/40 bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 shadow-xl shadow-black/40 group">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
-            {/* Cocktail Photo */}
-            <div className="relative md:col-span-5 h-56 md:h-auto overflow-hidden bg-slate-950">
-              <img 
-                src={cocktail.imageUrl} 
-                alt={cocktail.name} 
-                referrerPolicy="no-referrer"
-                onError={() => setImageError(true)}
-                className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 cursor-pointer"
-                onClick={() => setIsZoomed(true)}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/30 pointer-events-none" />
-              
-              {/* Badge over photo */}
-              <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/75 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-400/40 text-[11px] font-semibold text-amber-300">
-                <Sparkles size={12} className="animate-spin text-amber-400" />
-                <span>Cóctel Elaborado</span>
+          {/* Top Guarantee Banner */}
+          <div className="bg-slate-950/90 px-4 py-2 border-b border-slate-800/80 flex flex-wrap items-center justify-between gap-2 text-xs">
+            <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
+              <CheckCircle2 size={13} className="shrink-0" />
+              <span className="text-[11px]">Generación 100% Gratuita · Sin facturación ni cobros</span>
+            </div>
+            {cocktail.visualProfile && (
+              <div className="flex items-center gap-1.5 text-slate-400 text-[11px]">
+                <Palette size={12} className="text-amber-400" />
+                <span>Perfil visual:</span>
+                <span className="text-amber-300 font-medium flex items-center gap-1">
+                  <span 
+                    className="w-2 h-2 rounded-full inline-block" 
+                    style={{ backgroundColor: cocktail.visualProfile.primaryColor }}
+                  />
+                  {cocktail.visualProfile.liquidName}
+                </span>
               </div>
+            )}
+          </div>
 
-              {/* Zoom action button */}
-              <button 
-                onClick={() => setIsZoomed(true)}
-                className="absolute bottom-3 right-3 p-1.5 rounded-lg bg-black/60 hover:bg-black/90 text-slate-300 hover:text-amber-300 border border-white/10 backdrop-blur-sm transition-all"
-                title="Ampliar presentación del cóctel"
-              >
-                <Eye size={14} />
-              </button>
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-0">
+            {/* Cocktail Photo or Technical Diagram */}
+            <div className="relative md:col-span-5 min-h-[220px] md:h-auto overflow-hidden bg-slate-950 flex flex-col justify-center">
+              {viewMode === 'photo' && hasPhoto ? (
+                <div className="relative w-full h-full min-h-[220px]">
+                  <img 
+                    src={cocktail.imageUrl} 
+                    alt={cocktail.name} 
+                    referrerPolicy="no-referrer"
+                    onError={() => {
+                      setImageError(true);
+                      setViewMode('layers');
+                    }}
+                    className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500 cursor-pointer min-h-[220px]"
+                    onClick={() => setIsZoomed(true)}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-black/30 pointer-events-none" />
+                  
+                  {/* Badge over photo */}
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 bg-black/80 backdrop-blur-md px-2.5 py-1 rounded-full border border-amber-400/40 text-[10px] font-semibold text-amber-300">
+                    <Sparkles size={11} className="text-amber-400" />
+                    <span>{cocktail.source === 'database' ? 'Receta de Carta' : 'Presentación Fiel'}</span>
+                  </div>
+
+                  {/* Zoom action button */}
+                  <button 
+                    onClick={() => setIsZoomed(true)}
+                    className="absolute bottom-3 right-3 p-1.5 rounded-lg bg-black/70 hover:bg-black/95 text-slate-300 hover:text-amber-300 border border-white/10 backdrop-blur-sm transition-all shadow-md"
+                    title="Ampliar presentación del cóctel"
+                  >
+                    <Eye size={14} />
+                  </button>
+                </div>
+              ) : (
+                <CocktailVisualizer cocktail={cocktail} />
+              )}
+
+              {/* View Mode Toggle Button */}
+              {hasPhoto && (
+                <div className="absolute bottom-2.5 left-2.5 z-20 flex items-center bg-black/80 backdrop-blur-md rounded-lg p-0.5 border border-slate-700/80 shadow-md">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('photo')}
+                    className={`px-2 py-1 rounded text-[10px] font-medium transition-all flex items-center gap-1 ${
+                      viewMode === 'photo'
+                        ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                        : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    <Camera size={11} />
+                    <span>Foto</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('layers')}
+                    className={`px-2 py-1 rounded text-[10px] font-medium transition-all flex items-center gap-1 ${
+                      viewMode === 'layers'
+                        ? 'bg-amber-500 text-slate-950 font-bold shadow-sm'
+                        : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    <Layers size={11} />
+                    <span>Capas</span>
+                  </button>
+                </div>
+              )}
             </div>
 
             {/* Cocktail Details & Specifications */}
-            <div className="md:col-span-7 p-4 sm:p-5 flex flex-col justify-between space-y-3">
+            <div className="md:col-span-7 p-4 sm:p-5 flex flex-col justify-between space-y-3.5">
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400/90 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/25">
+                <div className="flex flex-wrap items-center gap-2 mb-1.5">
+                  <span className="text-[10px] uppercase font-bold tracking-widest text-amber-400/90 bg-amber-500/10 px-2.5 py-0.5 rounded-full border border-amber-500/25">
                     {cocktail.category || 'Coctelería de Autor'}
                   </span>
                   <span className="text-[10px] text-slate-400 flex items-center gap-1">
                     <Camera size={11} className="text-slate-500" />
                     {cocktail.source === 'database' ? 'Receta de Nuestra Barra' :
                      cocktail.source === 'cocktaildb' ? 'Fotografía de Archivo Mixológico' :
-                     'Presentación Generada por IA'}
+                     'Fotografía & Perfil Calibrado por IA'}
                   </span>
                 </div>
 
@@ -472,18 +538,31 @@ export const FormattedBartenderResponse: React.FC<FormattedBartenderResponseProp
                 )}
               </div>
 
+              {/* Technique & Ice specs if available */}
+              {cocktail.visualProfile && (
+                <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 bg-slate-950/60 rounded-xl px-3 py-2 border border-slate-800">
+                  <span>Método: <strong className="text-slate-200">{cocktail.visualProfile.technique || 'Agitado'}</strong></span>
+                  <span className="text-slate-600">·</span>
+                  <span>Servicio: <strong className="text-slate-200">{cocktail.visualProfile.iceStyle || 'Cubos'}</strong></span>
+                </div>
+              )}
+
               <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                <span className="italic flex items-center gap-1 text-slate-400">
+                <span className="italic flex items-center gap-1.5 text-slate-400">
                   <Wine size={13} className="text-amber-400" />
                   Listo para servir con técnica profesional
                 </span>
-                <button
-                  onClick={() => setIsZoomed(true)}
-                  className="text-amber-400 hover:text-amber-300 text-xs font-semibold flex items-center gap-1"
-                >
-                  Ver foto
-                  <ChevronRight size={13} />
-                </button>
+                <div className="flex items-center gap-2">
+                  {hasPhoto && (
+                    <button
+                      onClick={() => setIsZoomed(true)}
+                      className="text-amber-400 hover:text-amber-300 text-xs font-semibold flex items-center gap-1"
+                    >
+                      Ampliar
+                      <ChevronRight size={13} />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>

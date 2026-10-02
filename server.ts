@@ -74,40 +74,40 @@ Guía de estilo y formato:
         return;
       }
 
-      // Prioritize gemini-3.1-flash-lite for active quota, then other models
-      const modelsToTry = ['gemini-3.1-flash-lite', 'gemini-3.8-flash', 'gemini-flash-latest'];
+      // Use standard free Gemini models (gemini-3.8-flash, 3.5-flash, 3.1-flash-lite) requiring no billing/payment
+      const modelsToTry = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
       let text = '';
       let lastError: any = null;
 
-      for (const model of modelsToTry) {
-        // Try up to 2 attempts for transient 503 spikes
-        for (let attempt = 1; attempt <= 2; attempt++) {
-          try {
-            const response = await ai.models.generateContent({
-              model,
-              contents: trimmedQuery,
-              config: {
-                systemInstruction: SYSTEM_INSTRUCTION,
-              },
-            });
+      // Helper with adequate timeout (25s) to allow complete high-quality recipe generation
+      const generateWithTimeout = async (model: string, queryStr: string, timeoutMs = 25000) => {
+        return Promise.race([
+          ai.models.generateContent({
+            model,
+            contents: queryStr,
+            config: {
+              systemInstruction: SYSTEM_INSTRUCTION,
+            },
+          }),
+          new Promise<never>((_, reject) =>
+            setTimeout(() => reject(new Error('UPSTREAM_TIMEOUT')), timeoutMs)
+          ),
+        ]);
+      };
 
-            if (response.text) {
-              text = response.text;
-              break;
-            }
-          } catch (err: any) {
-            lastError = err;
-            const isTransient = err.status === 503 || (err.message && err.message.includes('high demand'));
-            if (isTransient && attempt === 1) {
-              await new Promise((resolve) => setTimeout(resolve, 1000));
-              continue;
-            }
-            // For quota exhaustion (429), break immediately to try next model
+      for (const model of modelsToTry) {
+        try {
+          const response = await generateWithTimeout(model, trimmedQuery, 25000);
+
+          if (response.text) {
+            text = response.text;
             break;
           }
+        } catch (err: any) {
+          lastError = err;
+          // Continue immediately to the next available fallback model
+          continue;
         }
-
-        if (text) break;
       }
 
       // If AI models were unreachable or quota exhausted, consult curated database
@@ -133,12 +133,14 @@ Le sugiero consultar alguna de nuestras recetas de la carta clásica:
       // Detect if elaborating a cocktail and resolve its image
       const detectedCocktail = await detectAndResolveCocktail(trimmedQuery, text);
 
-      // Cache successful response (up to 100 entries)
-      if (queryCache.size > 100) {
-        const firstKey = queryCache.keys().next().value;
-        if (firstKey) queryCache.delete(firstKey);
+      // Cache successful response (only genuine AI or curated responses, never generic wait notices)
+      if (text && !text.includes('alta demanda') && !text.includes('concurrido')) {
+        if (queryCache.size > 100) {
+          const firstKey = queryCache.keys().next().value;
+          if (firstKey) queryCache.delete(firstKey);
+        }
+        queryCache.set(cacheKey, { text, cocktail: detectedCocktail });
       }
-      queryCache.set(cacheKey, { text, cocktail: detectedCocktail });
 
       res.json({
         text,

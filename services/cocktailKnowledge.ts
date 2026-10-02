@@ -89,7 +89,13 @@ export function getCuratedCocktailResponse(query: string): string | null {
   // 2. Check in COCKTAILS collection
   const found = COCKTAILS.find(c => {
     const nameNorm = c.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    return normalized.includes(nameNorm) || nameNorm.includes(normalized);
+    if (normalized.includes(nameNorm) || nameNorm.includes(normalized)) {
+      return true;
+    }
+    // Check root words (e.g. 'mojito' in 'mojito clasico')
+    const ignored = new Set(['clasico', 'clasica', 'cubano', 'cubana', 'original', 'receta', 'cocktail', 'coctel', 'de', 'del', 'el', 'la', 'un', 'una', 'tradicional', 'perfecto']);
+    const tokens = nameNorm.split(/\s+/).filter(w => !ignored.has(w) && w.length > 2);
+    return tokens.some(t => normalized.includes(t));
   });
 
   if (found) {
