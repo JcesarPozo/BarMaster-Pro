@@ -198,7 +198,7 @@ export const AIBartender: React.FC<AIBartenderProps> = ({
             {/* Always accessible Refresh / New Query button */}
             <button
               onClick={handleReset}
-              className="text-xs text-slate-300 hover:text-amber-300 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 shadow-sm"
+              className="text-xs text-slate-300 hover:text-amber-300 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800/90 hover:bg-slate-700 border border-slate-700/80 shadow-sm cursor-pointer"
               title="Refrescar y comenzar nueva consulta"
             >
               <RotateCcw size={13} className="text-amber-400" />
@@ -207,7 +207,7 @@ export const AIBartender: React.FC<AIBartenderProps> = ({
 
             <button 
               onClick={handleClose}
-              className="text-slate-400 hover:text-slate-100 transition-colors p-1.5 rounded-lg hover:bg-slate-800"
+              className="text-slate-400 hover:text-slate-100 transition-colors p-1.5 rounded-lg hover:bg-slate-800 cursor-pointer"
               title="Cerrar ventana (Esc)"
             >
               <X size={18} />
