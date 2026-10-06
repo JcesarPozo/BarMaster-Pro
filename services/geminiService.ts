@@ -1,6 +1,28 @@
 import { SearchResult } from '../types';
 import { getCuratedCocktailResponse } from './cocktailKnowledge';
 import { detectAndResolveCocktail } from './cocktailImageResolver';
+import { GoogleGenAI } from '@google/genai';
+
+const SYSTEM_INSTRUCTION = `Eres 'El Maestro', un bartender experto, sofisticado y carismático con décadas de experiencia en las barras más prestigiosas del mundo (Londres, Nueva York, Tokio, Buenos Aires).
+
+Tu objetivo es guiar con maestría y precisión a mixólogos y apasionados de la coctelería con:
+1. Recetas exactas, proporciones y consejos técnicos avanzados (técnicas de agitado/shaking, refrescado/stirring, dilución óptima, cristalería adecuada, tipo de hielo).
+2. Historia, orígenes y anécdotas de cócteles clásicos y destilados icónicos.
+3. Consejos de autor, sustituciones inteligentes y armonización de notas aromáticas.
+
+Guía de estilo y formato:
+- Idioma y Tono: Responde siempre en español, con un tono elegante, hospitalario y profesional.
+- Estructura visual clara: Organiza tu respuesta en secciones con encabezados bien delimitados según corresponda:
+  ### Ingredientes y Proporciones
+  ### Cristalería y Hielo
+  ### Preparación Paso a Paso
+  ### Consejos del Maestro
+  ### Historia y Notas (opcional)
+- En la lista de ingredientes, presenta cada ingrediente con su medida clara (ej: Ginebra London Dry: 45 ml / 1.5 oz).
+- En la preparación, numera claramente los pasos en orden cronológico.
+- En los consejos del maestro, comparte secretos técnicos reales de barra.
+- Si la pregunta no es una receta sino una consulta técnica o histórica, responde con la misma elegancia y estructura organizada.
+- Si te consultan por temas totalmente ajenos a bebidas, gastronomía o coctelería, reconduce amablemente la charla hacia el mundo del bar.`;
 
 export const askBartender = async (query: string, signal?: AbortSignal): Promise<SearchResult> => {
   const trimmed = query?.trim();
@@ -92,33 +114,74 @@ export const askBartender = async (query: string, signal?: AbortSignal): Promise
 };
 
 /**
- * Resilient client-side fallback bartender: guarantees the user never gets blocked by a 404
+ * Resilient client-side fallback bartender: guarantees the user never gets blocked by a 404.
+ * Can directly call Gemini if client env key is present, or serve curated cocktail library.
  */
 async function fallbackClientBartender(query: string): Promise<SearchResult> {
-  const curated = getCuratedCocktailResponse(query);
+  const clientKey = 
+    (import.meta as any).env?.VITE_GEMINI_API_KEY ||
+    (import.meta as any).env?.VITE_GEMINIAPIKEY ||
+    (import.meta as any).env?.VITE_API_KEY ||
+    (import.meta as any).env?.GEMINI_API_KEY ||
+    (import.meta as any).env?.GEMINIAPIKEY ||
+    '';
+
   let text = '';
 
-  if (curated) {
-    text = curated + '\n\n*(Nota de servicio: Respuesta servida directamente por el catálogo maestro de coctelería. Para activar respuestas libres generadas en tiempo real por IA en Vercel, recuerda añadir la variable GEMINI_API_KEY en Vercel > Settings > Environment Variables y hacer Redeploy).*';
-  } else {
-    text = `¡Bienvenido a la barra de **BarMaster Pro**!
+  // If a client-side key was built into Vite (e.g. VITE_GEMINI_API_KEY in Vercel)
+  if (clientKey) {
+    try {
+      const ai = new GoogleGenAI({ apiKey: clientKey });
+      const models = ['gemini-3.8-flash', 'gemini-3.5-flash', 'gemini-3.1-flash-lite', 'gemini-flash-latest'];
+      for (const m of models) {
+        try {
+          const resp = await ai.models.generateContent({
+            model: m,
+            contents: query,
+            config: { systemInstruction: SYSTEM_INSTRUCTION },
+          });
+          if (resp.text) {
+            text = resp.text;
+            break;
+          }
+        } catch {
+          continue;
+        }
+      }
+    } catch (e) {
+      console.warn('Fallo llamada cliente a Gemini:', e);
+    }
+  }
 
-Hemos detectado que el endpoint de Inteligencia Artificial en Vercel respondió con un código 404 (Servicio no encontrado).
+  // If no client key or Gemini client call failed, use curated mixology catalogue
+  if (!text) {
+    const curated = getCuratedCocktailResponse(query);
+    if (curated) {
+      text = curated + '\n\n*(Nota de servicio: Respuesta servida directamente por el catálogo maestro de coctelería).*';
+    } else {
+      text = `¡Bienvenido a la barra de **BarMaster Pro**!
 
-### ¿Cómo activar el Bartender IA en Vercel con tu API Key?
-1. **Verifica la clave API**: En tu panel de **Vercel** ([vercel.com](https://vercel.com)), ingresa a tu proyecto y dirígete a **Settings** > **Environment Variables**.
-2. **Añade la variable**: Crea la variable con el nombre exacto **\`GEMINI_API_KEY\`** e introduce tu clave gratuita obtenida de Google AI Studio.
-3. **Asegúrate de marcar los entornos**: *Production*, *Preview* y *Development*.
-4. **Haz Redeploy**: En la pestaña **Deployments**, haz clic en los tres puntos (...) del último commit y selecciona **Redeploy** para aplicar el archivo \`vercel.json\` actualizado.
+Para activar el Bartender IA con tu clave en Vercel, sigue estos pasos:
+
+### 1. Variables de Entorno en Vercel
+En tu panel de [vercel.com](https://vercel.com) > Proyecto > **Settings** > **Environment Variables**, añade:
+* **\`GEMINI_API_KEY\`** (con guiones bajos)
+* Y opcionalmente: **\`VITE_GEMINI_API_KEY\`** (para que Vite la integre en la compilación del cliente)
+* Pega el valor de tu clave gratuita de Google AI Studio.
+* Asegúrate de marcar los 3 entornos: **Production**, **Preview**, **Development**.
+
+### 2. Sincronizar Cambios
+Si conectaste un repositorio de GitHub a Vercel, asegúrate de que los archivos \`api/bartender.ts\` y \`vercel.json\` estén subidos a tu repositorio Git antes de hacer *Redeploy*.
 
 ---
 
-### Mientras tanto, te invitamos a consultar nuestros cócteles estrella:
-* **Old Fashioned:** Bourbon, Angostura Bitters y terrón de azúcar con piel de naranja.
-* **Negroni:** 1:1:1 de Ginebra London Dry, Campari y Vermouth Rosso.
-* **Daiquiri Clásico:** Ron blanco carta blanca, zumo fresco de lima y jarabe simple.
-* **Dry Martini:** Ginebra y vermouth seco con aceituna sevillana.
-* **Margarita:** Tequila 100% agave azul, licor de naranja y zumo de lima recién exprimido.`;
+### Mientras tanto, consulta nuestras fórmulas clásicas:
+* **Old Fashioned:** Bourbon, Angostura Bitters y piel de naranja.
+* **Negroni:** Ginebra London Dry, Campari y Vermouth Rosso.
+* **Daiquiri Clásico:** Ron blanco, zumo de lima y jarabe simple.
+* **Dry Martini:** Ginebra y vermouth seco en copa fría con aceituna.
+* **Margarita:** Tequila 100% agave, licor de naranja y zumo fresco de lima.`;
+    }
   }
 
   const detectedCocktail = await detectAndResolveCocktail(query, text);

@@ -54,7 +54,16 @@ export async function handleBartenderQuery(query: string): Promise<BartenderResu
     };
   }
 
-  const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY || '';
+  const apiKey = 
+    process.env.GEMINI_API_KEY || 
+    process.env.GEMINIAPIKEY || 
+    process.env.API_KEY || 
+    process.env.GOOGLE_API_KEY || 
+    process.env.GEMINI_KEY || 
+    process.env.VITE_GEMINI_API_KEY || 
+    process.env.VITE_GEMINIAPIKEY || 
+    process.env.VITE_API_KEY || 
+    '';
 
   // Case 1: No API key configured in environment (common when first deployed to Vercel)
   if (!apiKey) {
