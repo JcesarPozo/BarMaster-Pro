@@ -1,5 +1,5 @@
-import { COCKTAILS } from '../data/cocktails.ts';
-import { DetectedCocktail, CocktailVisualProfile, ExtractedIngredientLayer } from '../types.ts';
+import { COCKTAILS } from '../data/cocktails';
+import { DetectedCocktail, CocktailVisualProfile, ExtractedIngredientLayer } from '../types';
 
 const cocktailImageCache = new Map<string, string>();
 

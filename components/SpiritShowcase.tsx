@@ -109,7 +109,7 @@ export const SpiritShowcase: React.FC<SpiritShowcaseProps> = ({
         {SPIRIT_ITEMS.map((spirit) => {
           const isSelected = selectedCategory === spirit.id;
           const count = spirit.id === 'Todos' 
-            ? Object.values(categoryCounts).reduce((a, b) => a + b, 0)
+            ? Object.values(categoryCounts).reduce((a: number, b: number) => a + b, 0)
             : categoryCounts[spirit.id] || 0;
 
           return (
