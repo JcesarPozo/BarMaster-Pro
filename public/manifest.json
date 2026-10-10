@@ -1,0 +1,32 @@
+{
+  "id": "/",
+  "name": "BarMaster Pro - Mixología y Coctelería de Autor",
+  "short_name": "BarMaster",
+  "description": "Tu barra maestra y recetario de alta mixología con inteligencia artificial y destilados de autor.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#090d16",
+  "theme_color": "#f59e0b",
+  "icons": [
+    {
+      "src": "/pwa-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/pwa-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

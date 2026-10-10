@@ -41,8 +41,12 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({
           }}
           className="flex items-center gap-2 group cursor-pointer"
         >
-          <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/30 flex items-center justify-center text-amber-400 group-hover:scale-105 transition-transform shadow-inner">
-            <Martini size={18} />
+          <div className="w-10 h-10 rounded-xl overflow-hidden border border-amber-500/40 group-hover:border-amber-400 transition-all shadow-md shadow-amber-500/10 group-hover:scale-105 shrink-0 bg-slate-950">
+            <img 
+              src="/assets/images/app_pwa_logo.jpg" 
+              alt="BarMaster Pro Logo" 
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-white group-hover:text-amber-400 transition-colors">
             BarMaster <span className="text-amber-500 font-normal italic">Pro</span>

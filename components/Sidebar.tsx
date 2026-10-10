@@ -49,9 +49,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       >
         {/* Header */}
         <div className="h-20 flex items-center justify-between px-6 border-b border-slate-800 bg-slate-900/60">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-400">
-              <Martini size={18} />
+          <div className="flex items-center gap-2.5">
+            <div className="w-9 h-9 rounded-xl overflow-hidden border border-amber-500/40 shadow-sm shrink-0 bg-slate-950">
+              <img 
+                src="/assets/images/app_pwa_logo.jpg" 
+                alt="BarMaster Pro Logo" 
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="font-serif text-xl font-bold text-white tracking-wide">
               BarMaster <span className="text-amber-500 font-normal italic">Pro</span>
